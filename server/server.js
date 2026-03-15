@@ -5,7 +5,25 @@ require('dotenv').config();
 
 const app = express();
 
-app.use(cors({ origin: process.env.CLIENT_URL || '*' }));
+app.use(
+  cors({
+    origin: function (origin, callback) {
+      const allowed = [
+        process.env.CLIENT_URL,
+        "https://classlink-omega.vercel.app",
+        "https://classlink-cd5c5n9wi-t-sharma-ys-2003s-projects.vercel.app",
+        "http://localhost:5173",
+        "http://localhost:5174",
+      ];
+      if (!origin || allowed.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
+    credentials: true,
+  }),
+);
 app.use(express.json());
 
 app.use('/api/auth',  require('./routes/auth'));
